@@ -17,12 +17,13 @@ defmodule ToyRobot.CLI do
 
   # run_commands/1
   defp run_commands(commands) do
-    run_commands(commands, %ToyRobot{north: 0, east: 0, dir: "NORTH"})
+    {:ok, robot} = ToyRobot.RobotPositions.start()
+    run_commands(commands, robot)
   end
 
   # run_commands/2
-  def run_commands(["MOVE" | commands], position) do
-    run_commands(commands, position
+  def run_commands(["MOVE" | commands], robot) do
+    run_commands(commands, robot
     |> ToyRobot.move)
   end
 
@@ -46,7 +47,7 @@ defmodule ToyRobot.CLI do
     |> ToyRobot.report)
   end
 
-  def run_commands([], %ToyRobot{} = position) do
-    ToyRobot.report(position)
+  def run_commands([], robot) do
+    ToyRobot.report(robot)
   end
 end

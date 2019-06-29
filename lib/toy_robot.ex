@@ -22,24 +22,20 @@ defmodule ToyRobot do
       iex> ToyRobot.check_boundary(%ToyRobot{north: 0, east: 0, dir: "WEST"})
       {:error, "Facing boundary, cannot move", %ToyRobot{north: 0, east: 0, dir: "WEST"}}
   """
-  def check_boundary(%ToyRobot{north: @upper_boundary, dir: "NORTH"} = position) do
-    {:error, "Facing boundary, cannot move", position}
-  end
+  def check_boundary(robot) do
+    east = ToyRobot.RobotPositions.get(robot, :east)
+    north = ToyRobot.RobotPositions.get(robot, :north)
+    dir = ToyRobot.RobotPositions.get(robot, :dir)
 
-  def check_boundary(%ToyRobot{north: @lower_boundary, dir: "SOUTH"} = position) do
-    {:error, "Facing boundary, cannot move", position}
-  end
-
-  def check_boundary(%ToyRobot{east: @upper_boundary, dir: "EAST"} = position) do
-    {:error, "Facing boundary, cannot move", position}
-  end
-
-  def check_boundary(%ToyRobot{east: @lower_boundary, dir: "WEST"} = position) do
-    {:error, "Facing boundary, cannot move", position}
-  end
-
-  def check_boundary(%ToyRobot{} = position) do
-    {:ok, position}
+    cond do
+      (east == @upper_boundary && dir == "EAST") ||
+      (east == @lower_boundary && dir == "WEST") ||
+      (north == @upper_boundary && dir == "NORTH") ||
+      (north == @lower_boundary && dir == "SOUTH") ->
+        {:error, "Facing boundary, cannot move", robot}
+      true ->
+        {:ok, robot}
+    end
   end
   
 
@@ -52,25 +48,23 @@ defmodule ToyRobot do
       iex> %ToyRobot{north: 0, east: 4, dir: "EAST"} |> ToyRobot.move
       %ToyRobot{north: 0, east: 4, dir: "EAST"}
   """
-  def move(position) when is_map(position) do
-    check_boundary(position)
+  def move(robot) when is_pid(robot) do
+    check_boundary(robot)
     |> move()
   end
 
-  def move({:ok, %ToyRobot{north: north, dir: "NORTH"} = position}) do
-    %{ position | north: north + 1 }
-  end
-
-  def move({:ok, %ToyRobot{east: east, dir: "EAST"} = position}) do
-    %{position | east: east + 1}
-  end
-
-  def move({:ok, %ToyRobot{east: east, dir: "WEST"} = position}) do
-    %{position | east: east - 1}
-  end
-
-  def move({:ok, %ToyRobot{north: north, dir: "SOUTH"} = position}) do
-    %{position | north: north - 1}
+  def move({:ok, robot}) do
+    case ToyRobot.RobotPositions.get(robot, :dir) do
+      "NORTH" ->
+        ToyRobot.RobotPositions.put(robot, :north, ToyRobot.RobotPositions.get(robot, :north) + 1)
+      "SOUTH" ->
+        ToyRobot.RobotPositions.put(robot, :north, ToyRobot.RobotPositions.get(robot, :north) - 1)
+      "EAST" ->
+        ToyRobot.RobotPositions.put(robot, :east, ToyRobot.RobotPositions.get(robot, :north) + 1)
+      "WEST" ->
+        ToyRobot.RobotPositions.put(robot, :east, ToyRobot.RobotPositions.get(robot, :north) - 1)
+    end
+    robot
   end
 
   def move({:error, message, position}) do
@@ -153,9 +147,9 @@ defmodule ToyRobot do
   iex> ToyRobot.report(%ToyRobot{north: 1, east: 2, dir: "WEST"})
   %ToyRobot{north: 1, east: 2, dir: "WEST"}
   """
-  def report(%ToyRobot{north: north, east: east, dir: dir} = position) do
-    IO.puts "Robot is at position #{east}, #{north}, facing: #{dir}"
-    position
+  def report(robot) when is_pid(robot) do
+    IO.puts "Robot is at position #{ToyRobot.RobotPositions.get(robot, :east)}, #{ToyRobot.RobotPositions.get(robot, :north)}, facing: #{ToyRobot.RobotPositions.get(robot, :dir)}"
+    robot
   end
 
 end

@@ -1,6 +1,6 @@
 defmodule ToyRobot.RobotPositions do
 
-  def start(state \\ %{}) do
+  def start(state \\ %ToyRobot{north: 0, east: 0, dir: "NORTH"}) do
     GenServer.start(ToyRobot.RobotPositions, state)
   end
 

@@ -51,9 +51,9 @@ defmodule ToyRobot do
       "SOUTH" ->
         ToyRobot.RobotPositions.put(robot, :north, ToyRobot.RobotPositions.get(robot, :north) - 1)
       "EAST" ->
-        ToyRobot.RobotPositions.put(robot, :east, ToyRobot.RobotPositions.get(robot, :north) + 1)
+        ToyRobot.RobotPositions.put(robot, :east, ToyRobot.RobotPositions.get(robot, :east) + 1)
       "WEST" ->
-        ToyRobot.RobotPositions.put(robot, :east, ToyRobot.RobotPositions.get(robot, :north) - 1)
+        ToyRobot.RobotPositions.put(robot, :east, ToyRobot.RobotPositions.get(robot, :east) - 1)
     end
     robot
   end
@@ -63,36 +63,28 @@ defmodule ToyRobot do
     position
   end
 
-  @doc """
-  Rotates position's dir property left or right by 90deg
-  ## Examples
-      iex> ToyRobot.rotate(%{north: 0, east: 0, dir: "NORTH"}, "LEFT")
-      %{north: 0, east: 0, dir: "WEST"}
 
-      iex> ToyRobot.rotate(%{north: 0, east: 0, dir: "EAST"}, "RIGHT")
-      %{north: 0, east: 0, dir: "SOUTH"}
-  """
-
-  def rotate( %{dir: dir} = position, "LEFT") do
-    new_dir = case dir do
+  def rotate(robot, "LEFT") do
+    new_dir = case ToyRobot.RobotPositions.get(robot, :dir) do
       "NORTH" -> "WEST"
       "WEST" -> "SOUTH"
       "SOUTH" -> "EAST"
       "EAST" -> "NORTH"
     end
-    %{ position | dir: new_dir }
+    ToyRobot.RobotPositions.put(robot, :dir, new_dir)
+    robot
   end
 
-  def rotate( %{dir: dir} = position, "RIGHT") do
-    new_dir = case dir do
+  def rotate( robot, "RIGHT") do
+    new_dir = case ToyRobot.RobotPositions.get(robot, :dir) do
       "NORTH" -> "EAST"
       "WEST" -> "NORTH"
       "SOUTH" -> "WEST"
       "EAST" -> "SOUTH"
     end
-    %{ position | dir: new_dir }
+    ToyRobot.RobotPositions.put(robot, :dir, new_dir)
+    robot
   end
-
 
   @doc """
   Places the position to a new set of coordinates

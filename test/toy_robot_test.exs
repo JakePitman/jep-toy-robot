@@ -56,4 +56,36 @@ defmodule ToyRobotTest do
         assert ToyRobot.RobotPositions.get(robot, :dir) == "SOUTH"
     end
   end
+
+  describe "#place" do
+
+    test "places the position on a new set of coordinates" do
+      {:ok, robot} = ToyRobot.RobotPositions.start
+      ToyRobot.place(robot, "3,3,NORTH")
+      assert ToyRobot.RobotPositions.get(robot, :north) == 3
+      assert ToyRobot.RobotPositions.get(robot, :east) == 3
+      assert ToyRobot.RobotPositions.get(robot, :dir) == "NORTH"
+    end
+    test "Reverts back to prev. position when given invalid DIR" do
+      {:ok, robot} = ToyRobot.RobotPositions.start
+      ToyRobot.place(robot, "3,3,NurTH")
+      assert ToyRobot.RobotPositions.get(robot, :north) == 0
+      assert ToyRobot.RobotPositions.get(robot, :east) == 0
+      assert ToyRobot.RobotPositions.get(robot, :dir) == "NORTH"
+    end
+    test "Reverts back to prev. position when given coord outside boundary" do
+      {:ok, robot} = ToyRobot.RobotPositions.start
+      ToyRobot.place(robot, "3,9001,NORTH")
+      assert ToyRobot.RobotPositions.get(robot, :north) == 0
+      assert ToyRobot.RobotPositions.get(robot, :east) == 0
+      assert ToyRobot.RobotPositions.get(robot, :dir) == "NORTH"
+    end
+    test "Reverts back to prev. position when wEirD syntax" do
+      {:ok, robot} = ToyRobot.RobotPositions.start
+      ToyRobot.place(robot, "3.3,NORTH")
+      assert ToyRobot.RobotPositions.get(robot, :north) == 0
+      assert ToyRobot.RobotPositions.get(robot, :east) == 0
+      assert ToyRobot.RobotPositions.get(robot, :dir) == "NORTH"
+    end
+  end
 end

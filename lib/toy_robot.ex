@@ -86,29 +86,24 @@ defmodule ToyRobot do
     robot
   end
 
-  @doc """
-  Places the position to a new set of coordinates
-  Reverts back to prev. position when given invalid coordinates
-  ## Examples
-    iex> ToyRobot.place( %ToyRobot{north: 1, east: 1, dir: "EAST"}, "3,3,NORTH")
-    %ToyRobot{north: 3, east: 3, dir: "NORTH"}
-  """
-
-  def place(%ToyRobot{} = previous_position, string_command ) do
+  def place(robot, string_command ) do
     string_to_map_result = string_command_to_map(string_command)
     case string_to_map_result do
       {:ok, coord} ->
         if Enum.member?(@boundary_range, coord[:east]) && Enum.member?(@boundary_range, coord[:north]) do
-          %ToyRobot{ north: coord[:north], east: coord[:east], dir: coord[:dir] }
+          ToyRobot.RobotPositions.put(robot, :north, coord[:north])
+          ToyRobot.RobotPositions.put(robot, :east, coord[:east])
+          ToyRobot.RobotPositions.put(robot, :dir, coord[:dir])
+          robot
         else
           IO.puts("Invalid PLACE coordinates" )
           IO.puts("Reverting to previous position" )
-          previous_position
+          robot
         end
       {:error, message} ->
         IO.puts(message)
         IO.puts("Reverting to previous position" )
-        previous_position
+        robot
     end
   end
 

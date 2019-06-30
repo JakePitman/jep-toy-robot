@@ -9,19 +9,6 @@ defmodule ToyRobot do
 
   defstruct [:north, :east, :dir]
 
-  @moduledoc """
-  Documentation for ToyRobot.
-  """
-
-  @doc """
-  checks if robot is facing boundary, returns :ok if robot can move forward, :error if can't
-  ## Examples
-      iex> ToyRobot.check_boundary(%ToyRobot{north: 0, east: 0, dir: "NORTH"})
-      {:ok, %ToyRobot{north: 0, east: 0, dir: "NORTH"}}
-
-      iex> ToyRobot.check_boundary(%ToyRobot{north: 0, east: 0, dir: "WEST"})
-      {:error, "Facing boundary, cannot move", %ToyRobot{north: 0, east: 0, dir: "WEST"}}
-  """
   def check_boundary(robot) do
     east = ToyRobot.RobotPositions.get(robot, :east)
     north = ToyRobot.RobotPositions.get(robot, :north)
@@ -42,11 +29,15 @@ defmodule ToyRobot do
   @doc """
   Moves one space forward & returns new pos if check_boundary passes. Returns current pos if check_boundary fails
   ## Examples
-      iex> ToyRobot.move(%ToyRobot{north: 0, east: 0, dir: "NORTH"})
-      %ToyRobot{north: 1, east: 0, dir: "NORTH"}
+      iex> {:ok, robot} = ToyRobot.RobotPositions.start()
+      iex> ToyRobot.move(robot)
+      iex> ToyRobot.RobotPositions.get(robot, :north)
+      1
 
-      iex> %ToyRobot{north: 0, east: 4, dir: "EAST"} |> ToyRobot.move
-      %ToyRobot{north: 0, east: 4, dir: "EAST"}
+      iex> {:ok, robot} = ToyRobot.RobotPositions.start(%ToyRobot{north: 0, east: 4, dir: "EAST"})
+      iex> ToyRobot.move(robot)
+      iex> ToyRobot.RobotPositions.get(robot, :east)
+      4
   """
   def move(robot) when is_pid(robot) do
     check_boundary(robot)
@@ -141,12 +132,6 @@ defmodule ToyRobot do
     end
   end
 
-  @doc """
-  Takes, outputs, and then returns a position
-  #Examples
-  iex> ToyRobot.report(%ToyRobot{north: 1, east: 2, dir: "WEST"})
-  %ToyRobot{north: 1, east: 2, dir: "WEST"}
-  """
   def report(robot) when is_pid(robot) do
     IO.puts "Robot is at position #{ToyRobot.RobotPositions.get(robot, :east)}, #{ToyRobot.RobotPositions.get(robot, :north)}, facing: #{ToyRobot.RobotPositions.get(robot, :dir)}"
     robot

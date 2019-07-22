@@ -4,11 +4,11 @@ defmodule ToyRobot.Router do
    plug :match
   plug :dispatch
 
-   get "/" do
+  get "/" do
     send_resp(conn, 200, "Welcome")
   end
 
-   match _ do
+  match _ do
     send_resp(conn, 404, "OOPS!")
   end
 end 

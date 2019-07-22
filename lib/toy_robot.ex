@@ -3,6 +3,8 @@ require IEx
 
 defmodule ToyRobot do
 
+  alias ToyRobot.RobotPositions
+
   @boundary_range 0..4
   @lower_boundary Enum.to_list(@boundary_range) |> Enum.at(0)
   @upper_boundary Enum.to_list(@boundary_range) |> Enum.at(-1)
@@ -10,9 +12,9 @@ defmodule ToyRobot do
   defstruct [:north, :east, :dir]
 
   def check_boundary(robot) do
-    east = ToyRobot.RobotPositions.get(robot, :east)
-    north = ToyRobot.RobotPositions.get(robot, :north)
-    dir = ToyRobot.RobotPositions.get(robot, :dir)
+    east = RobotPositions.get(robot, :east)
+    north = RobotPositions.get(robot, :north)
+    dir = RobotPositions.get(robot, :dir)
 
     cond do
       (east == @upper_boundary && dir == "EAST") ||
@@ -45,15 +47,15 @@ defmodule ToyRobot do
   end
 
   def move({:ok, robot}) do
-    case ToyRobot.RobotPositions.get(robot, :dir) do
+    case RobotPositions.get(robot, :dir) do
       "NORTH" ->
-        ToyRobot.RobotPositions.put(robot, :north, ToyRobot.RobotPositions.get(robot, :north) + 1)
+        RobotPositions.put(robot, :north, RobotPositions.get(robot, :north) + 1)
       "SOUTH" ->
-        ToyRobot.RobotPositions.put(robot, :north, ToyRobot.RobotPositions.get(robot, :north) - 1)
+        RobotPositions.put(robot, :north, RobotPositions.get(robot, :north) - 1)
       "EAST" ->
-        ToyRobot.RobotPositions.put(robot, :east, ToyRobot.RobotPositions.get(robot, :east) + 1)
+        RobotPositions.put(robot, :east, RobotPositions.get(robot, :east) + 1)
       "WEST" ->
-        ToyRobot.RobotPositions.put(robot, :east, ToyRobot.RobotPositions.get(robot, :east) - 1)
+        RobotPositions.put(robot, :east, RobotPositions.get(robot, :east) - 1)
     end
     robot
   end
@@ -65,24 +67,24 @@ defmodule ToyRobot do
 
 
   def rotate(robot, "LEFT") do
-    new_dir = case ToyRobot.RobotPositions.get(robot, :dir) do
+    new_dir = case RobotPositions.get(robot, :dir) do
       "NORTH" -> "WEST"
       "WEST" -> "SOUTH"
       "SOUTH" -> "EAST"
       "EAST" -> "NORTH"
     end
-    ToyRobot.RobotPositions.put(robot, :dir, new_dir)
+    RobotPositions.put(robot, :dir, new_dir)
     robot
   end
 
   def rotate( robot, "RIGHT") do
-    new_dir = case ToyRobot.RobotPositions.get(robot, :dir) do
+    new_dir = case RobotPositions.get(robot, :dir) do
       "NORTH" -> "EAST"
       "WEST" -> "NORTH"
       "SOUTH" -> "WEST"
       "EAST" -> "SOUTH"
     end
-    ToyRobot.RobotPositions.put(robot, :dir, new_dir)
+    RobotPositions.put(robot, :dir, new_dir)
     robot
   end
 
@@ -91,9 +93,9 @@ defmodule ToyRobot do
     case string_to_map_result do
       {:ok, coord} ->
         if Enum.member?(@boundary_range, coord[:east]) && Enum.member?(@boundary_range, coord[:north]) do
-          ToyRobot.RobotPositions.put(robot, :north, coord[:north])
-          ToyRobot.RobotPositions.put(robot, :east, coord[:east])
-          ToyRobot.RobotPositions.put(robot, :dir, coord[:dir])
+          RobotPositions.put(robot, :north, coord[:north])
+          RobotPositions.put(robot, :east, coord[:east])
+          RobotPositions.put(robot, :dir, coord[:dir])
           robot
         else
           IO.puts("Invalid PLACE coordinates" )
@@ -120,7 +122,7 @@ defmodule ToyRobot do
   end
 
   def report(robot) when is_pid(robot) do
-    IO.puts "Robot is at position #{ToyRobot.RobotPositions.get(robot, :east)}, #{ToyRobot.RobotPositions.get(robot, :north)}, facing: #{ToyRobot.RobotPositions.get(robot, :dir)}"
+    IO.puts "Robot is at position #{RobotPositions.get(robot, :east)}, #{RobotPositions.get(robot, :north)}, facing: #{RobotPositions.get(robot, :dir)}"
     robot
   end
 

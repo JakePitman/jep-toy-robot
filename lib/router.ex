@@ -24,7 +24,7 @@ defmodule ToyRobot.Router do
     send_resp(conn, 200, inspect(robot))
   end
 
-  post "/report" do
+  get "/report" do
     robot = GenServer.call(ToyRobot.Game.Robot, :report)
     send_resp(conn, 200, inspect(robot))
   end

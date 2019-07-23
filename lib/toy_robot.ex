@@ -117,7 +117,7 @@ defmodule ToyRobot do
     %ToyRobot{north: 3, east: 3, dir: "NORTH"}
   """
 
-  def place(%ToyRobot{} = previous_position, string_command ) do
+  def place(previous_position, string_command) do
     string_to_map_result = string_command_to_map(string_command)
     case string_to_map_result do
       {:ok, coord} ->

@@ -16,7 +16,7 @@ defmodule ToyRobot.MixProject do
   def application do
     [
       extra_applications: [:logger],
-      mod: {ToyRobot.Application, []}
+      mod: {ToyRobot.Application, [north: 0, east: 0, dir: "NORTH"]}
     ]
   end
 

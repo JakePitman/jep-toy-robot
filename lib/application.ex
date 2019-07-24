@@ -1,10 +1,10 @@
 defmodule ToyRobot.Application do
   use Application
 
-  def start(_type, _args) do
+  def start(_type, args) do
     children = [
       {Plug.Cowboy, scheme: :http, plug: ToyRobot.Router, options: [port: 8080]},
-      {ToyRobot.Game.Robot, %ToyRobot{north: 0, east: 0, dir: "NORTH"}}
+      {ToyRobot.Game.Robot, %ToyRobot{north: args[:north], east: args[:east], dir: args[:dir]}}
     ]
 
 
